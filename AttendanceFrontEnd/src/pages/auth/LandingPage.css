@@ -1,0 +1,73 @@
+/* Landing Page Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.card-icon {
+  transition: transform 0.3s ease;
+}
+
+.MuiCard-root:hover .card-icon {
+  transform: scale(1.1);
+}
+
+.role-card {
+  cursor: pointer;
+}
+
+.role-button {
+  transition: all 0.3s ease;
+}
+
+.role-button:hover {
+  transform: translateY(-3px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .role-card {
+    margin-bottom: 16px;
+  }
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floating-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Wave animation */
+@keyframes wave {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1000px;
+  }
+}
+
+.wave-animation {
+  animation: wave 15s linear infinite;
+}
