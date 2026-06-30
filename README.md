@@ -25,6 +25,8 @@ graph TD
 - Zustand store in React with local state persistence for keeping session active across refreshes.
 - Secured `/api/auth/register` endpoint (Admin-only access).
 - Automatic `AdminSeeder` bootstrapping to ensure a default admin exists on startup.
+- User management endpoints in `/api/auth/users` (Admin-only access to list, edit, and delete Admin accounts).
+- Dedicated `/api/auth/logout` endpoint.
 
 #### 👑 Administrator Portal
 - **Dashboard**: High-level system overview stats.
