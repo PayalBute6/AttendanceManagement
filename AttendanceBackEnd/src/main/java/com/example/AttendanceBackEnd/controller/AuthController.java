@@ -7,8 +7,14 @@ import com.example.AttendanceBackEnd.dto.SignupRequest;
 import com.example.AttendanceBackEnd.dto.PasswordChangeRequest;
 import com.example.AttendanceBackEnd.dto.UserProfileUpdateRequest;
 import com.example.AttendanceBackEnd.model.User;
+import com.example.AttendanceBackEnd.model.Student;
+import com.example.AttendanceBackEnd.model.Teacher;
 import com.example.AttendanceBackEnd.repository.UserRepository;
+import com.example.AttendanceBackEnd.repository.StudentRepository;
+import com.example.AttendanceBackEnd.repository.TeacherRepository;
+import org.springframework.transaction.annotation.Transactional;
 import com.example.AttendanceBackEnd.security.jwt.JwtUtils;
+import java.util.List;
 import com.example.AttendanceBackEnd.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +45,12 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    StudentRepository studentRepository;
+
+    @Autowired
+    TeacherRepository teacherRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -163,5 +175,82 @@ public class AuthController {
         userRepository.save(user);
         
         return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
+    }
+
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userRepository.findByRole(User.ERole.ROLE_ADMIN));
+    }
+
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> editUser(@PathVariable Long id, @RequestBody User profileData) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: User not found"));
+        }
+        User user = userOptional.get();
+
+        // Only allow editing if the user is an admin
+        if (user.getRole() != User.ERole.ROLE_ADMIN) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: You can only edit admin accounts here. Students and Teachers must be edited via their respective portals."));
+        }
+
+        if (profileData.getUsername() != null && !profileData.getUsername().trim().isEmpty()) {
+            Optional<User> existingUser = userRepository.findByUsername(profileData.getUsername());
+            if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            }
+            user.setUsername(profileData.getUsername());
+        }
+
+        if (profileData.getEmail() != null && !profileData.getEmail().trim().isEmpty()) {
+            Optional<User> existingEmail = userRepository.findByEmail(profileData.getEmail());
+            if (existingEmail.isPresent() && !existingEmail.get().getId().equals(id)) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already taken!"));
+            }
+            user.setEmail(profileData.getEmail());
+        }
+
+        if (profileData.getFullName() != null) {
+            user.setFullName(profileData.getFullName());
+        }
+
+        if (profileData.getPhoneNumber() != null) {
+            user.setPhoneNumber(profileData.getPhoneNumber());
+        }
+
+        if (profileData.getPassword() != null && !profileData.getPassword().trim().isEmpty()) {
+            user.setPassword(encoder.encode(profileData.getPassword()));
+        }
+
+        userRepository.save(user);
+        return ResponseEntity.ok(new MessageResponse("Admin user updated successfully"));
+    }
+
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: User not found"));
+        }
+        User user = userOptional.get();
+
+        // Only allow deleting if the user is an admin
+        if (user.getRole() != User.ERole.ROLE_ADMIN) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: You can only delete admin accounts here. Students and Teachers must be deleted via their respective portals."));
+        }
+
+        // Admins are not linked to Student or Teacher profiles, so we can delete directly.
+        userRepository.delete(user);
+        return ResponseEntity.ok(new MessageResponse("Admin user deleted successfully"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        return ResponseEntity.ok(new MessageResponse("Log out successful"));
     }
 }

@@ -1,3 +1,4 @@
+
 package com.example.AttendanceBackEnd.controller;
 
 import com.example.AttendanceBackEnd.dto.ClassesDto;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ public class ClassesController {
     }
 
     @PostMapping("/debug")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> debugCreateClass(@RequestBody ClassesDto dto) {
         Map<String, Object> response = new HashMap<>();
         response.put("receivedData", dto);
@@ -58,12 +61,21 @@ public class ClassesController {
     }
     
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ClassesDto createClass(@RequestBody ClassesDto dto) {
         System.out.println("Creating class with data: " + dto);
         return classesService.createClass(dto);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ClassesDto> updateClass(@PathVariable Long id, @RequestBody ClassesDto dto) {
+        ClassesDto updated = classesService.updateClass(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteClass(@PathVariable Long id) {
         classesService.deleteClass(id);
     }
