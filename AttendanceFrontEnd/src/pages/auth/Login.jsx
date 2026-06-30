@@ -11,13 +11,21 @@ import {
   Alert,
   CircularProgress,
   Chip,
-  Divider
+  IconButton,
+  InputAdornment,
+  Zoom,
+  CssBaseline
 } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import PersonIcon from '@mui/icons-material/Person';
-import SchoolIcon from '@mui/icons-material/School';
+import {
+  LockOutlined as LockOutlinedIcon,
+  ArrowBack as ArrowBackIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  Person as PersonIcon,
+  School as SchoolIcon,
+  Visibility,
+  VisibilityOff,
+  AccountCircle
+} from '@mui/icons-material';
 import authService from '../../services/authService';
 import useAuthStore from '../../store/authStore';
 
@@ -26,6 +34,7 @@ const Login = () => {
   const { login } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
@@ -38,6 +47,10 @@ const Login = () => {
     }
   }, []);
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -48,7 +61,6 @@ const Login = () => {
       const data = await authService.login(email, password);
       console.log('Login response from server:', data);
       
-      // Check if role exists in the response
       if (!data.role) {
         console.error('No role found in response:', data);
         setError('Login successful but no role information received from server');
@@ -56,26 +68,21 @@ const Login = () => {
         return;
       }
       
-      // Log the original role from backend
       console.log('Original role from backend:', data.role);
       
-      // Create a user object from the response
       const userData = {
         id: data.id,
         username: data.username,
         email: data.email,
         fullName: data.fullName,
-        role: data.role.replace('ROLE_', '').toLowerCase() // Convert ROLE_ADMIN or ROLE_TEACHER to admin or teacher
+        role: data.role.replace('ROLE_', '').toLowerCase()
       };
       
-      // Log the processed role
       console.log('Processed role for frontend:', userData.role);
       
-      // Store in auth store
       login(userData, data.token, userData.role);
       console.log('Stored in auth store with role:', userData.role);
       
-      // Redirect based on user role with explicit logging
       if (userData.role === 'admin') {
         console.log('Role is admin, navigating to admin dashboard');
         navigate('/admin/dashboard');
@@ -87,7 +94,7 @@ const Login = () => {
         navigate('/student/dashboard');
       }
     } catch (err) {
-      setError(err.message || 'Invalid email or password');
+      setError(err.message || 'Invalid username or password');
     } finally {
       setLoading(false);
     }
@@ -133,92 +140,179 @@ const Login = () => {
     }
   };
 
+  const getButtonGradient = () => {
+    switch(selectedRole) {
+      case 'admin':
+        return 'linear-gradient(135deg, #1976d2 0%, #115293 100%)';
+      case 'teacher':
+        return 'linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)';
+      case 'student':
+        return 'linear-gradient(135deg, #0288d1 0%, #01579b 100%)';
+      default:
+        return 'linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%)';
+    }
+  };
+
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper 
-        elevation={6}
+    <>
+      <CssBaseline />
+      <Box
         sx={{
-          marginTop: 8,
-          padding: 4,
+          minHeight: '100vh',
+          width: '100%',
+          background: 'linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%)',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
+          padding: 2,
         }}
       >
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
-          <Button
-            component={Link}
-            to="/"
-            startIcon={<ArrowBackIcon />}
-            color={getRoleColor()}
-          >
-            Back to Home
-          </Button>
-        </Box>
-        
-        <Avatar sx={{ m: 1, bgcolor: `${getRoleColor()}.main` }}>
-          {getRoleIcon()}
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Digital Attendance
-        </Typography>
-        
-        {selectedRole && (
-          <Chip 
-            label={`Login as ${getRoleTitle()}`} 
-            color={getRoleColor()} 
-            sx={{ mt: 1 }} 
-            icon={getRoleIcon()} 
-          />
-        )}
-        
-        <Typography component="h2" variant="h6" sx={{ mt: 1 }}>
-          Sign In
-        </Typography>
-        
-        {error && (
-          <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
-            {error}
-          </Alert>
-        )}
-        
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} /> : 'Sign In'}
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+        <Container component="main" maxWidth="xs">
+          <Zoom in={true} timeout={500}>
+            <Paper 
+              elevation={12}
+              sx={{
+                padding: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                borderRadius: 4,
+                background: 'rgba(255, 255, 255, 0.90)',
+                backdropFilter: 'blur(15px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+              }}
+            >
+              <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', mb: 1 }}>
+                <Button
+                  component={Link}
+                  to="/"
+                  startIcon={<ArrowBackIcon />}
+                  color={getRoleColor()}
+                  sx={{ textTransform: 'none', fontWeight: 'bold' }}
+                >
+                  Back to Home
+                </Button>
+              </Box>
+              
+              <Avatar sx={{ m: 1, bgcolor: `${getRoleColor()}.main`, width: 56, height: 56, boxShadow: 3 }}>
+                {getRoleIcon()}
+              </Avatar>
+              
+              <Typography component="h1" variant="h4" fontWeight="bold" color="text.primary" sx={{ mt: 1 }}>
+                Digital Attendance
+              </Typography>
+              
+              {selectedRole && (
+                <Chip 
+                  label={`Sign In as ${getRoleTitle()}`} 
+                  color={getRoleColor()} 
+                  sx={{ mt: 1.5, fontWeight: 'bold', px: 1 }} 
+                  icon={getRoleIcon()} 
+                />
+              )}
+              
+              {error && (
+                <Alert severity="error" sx={{ width: '100%', mt: 3, borderRadius: 2 }}>
+                  {error}
+                </Alert>
+              )}
+              
+              <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Username"
+                  name="email"
+                  autoComplete="username"
+                  autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                    }
+                  }}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockOutlinedIcon color="action" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                    }
+                  }}
+                />
+                
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  disabled={loading}
+                  sx={{ 
+                    mt: 4, 
+                    mb: 2, 
+                    py: 1.5,
+                    borderRadius: 3,
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    textTransform: 'none',
+                    background: getButtonGradient(),
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(0, 0, 0, 0.2)',
+                      background: getButtonGradient(),
+                    },
+                    '&:active': {
+                      transform: 'translateY(0)',
+                    }
+                  }}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : `Log In as ${getRoleTitle() || 'User'}`}
+                </Button>
+              </Box>
+            </Paper>
+          </Zoom>
+        </Container>
+      </Box>
+    </>
   );
 };
 
