@@ -309,26 +309,34 @@ const StudentsList = () => {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, filteredStudents.length - page * rowsPerPage);
 
   return (
-    <Box sx={{ mt: 30 }}>
+    <Box sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>
         Students Management
       </Typography>
       
       {/* Search and Add Button */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, mt: 6 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', width: '40%' }}>
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="Search students..."
-            value={searchQuery}
-            onChange={handleSearch}
-            sx={{ mr: 1, flexGrow: 1 }}
-            InputProps={{
-              startAdornment: <SearchIcon color="action" sx={{ mr: 1 }} />,
-            }}
-          />
-        </Box>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          gap: 2, 
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'stretch', sm: 'center' },
+          mb: 3, 
+          mt: 2 
+        }}
+      >
+        <TextField
+          variant="outlined"
+          size="small"
+          placeholder="Search students..."
+          value={searchQuery}
+          onChange={handleSearch}
+          sx={{ width: { xs: '100%', sm: '40%' } }}
+          InputProps={{
+            startAdornment: <SearchIcon color="action" sx={{ mr: 1 }} />,
+          }}
+        />
         <Button
           variant="contained"
           color="primary"
@@ -351,7 +359,7 @@ const StudentsList = () => {
       </Box>
       
       {/* Students Table */}
-      <TableContainer component={Paper} elevation={3}>
+      <TableContainer component={Paper} elevation={3} sx={{ overflowX: 'auto', maxWidth: '100%' }}>
         <Table>
           <TableHead>
             <TableRow>

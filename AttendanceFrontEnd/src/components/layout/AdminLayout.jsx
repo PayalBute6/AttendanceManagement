@@ -42,6 +42,7 @@ const AdminLayout = () => {
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const [open, setOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleDrawerOpen = () => {
@@ -50,6 +51,10 @@ const AdminLayout = () => {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
   const handleProfileMenuOpen = (event) => {
@@ -70,15 +75,58 @@ const AdminLayout = () => {
     { text: 'Teachers', icon: <PersonIcon />, path: '/admin/teachers' },
     { text: 'Students', icon: <GroupsIcon />, path: '/admin/students' },
     { text: 'Classes', icon: <ClassIcon />, path: '/admin/classes' },
-    // Courses feature temporarily hidden
-    // { text: 'Courses', icon: <MenuBookIcon />, path: '/admin/courses' },
-    // Attendance should be managed by teachers, not admins
-    //{ text: 'Attendance', icon: <EventNoteIcon />, path: '/teacher/attendance/reports' },
   ];
 
   const handleMenuItemClick = (path) => {
     navigate(path);
   };
+
+  const drawerContent = (
+    <>
+      <Toolbar
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          px: [1],
+        }}
+      >
+        <IconButton onClick={handleDrawerClose} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </Toolbar>
+      <Divider />
+      <List>
+        {menuItems.map((item) => (
+          <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: (open || mobileOpen) ? 'initial' : 'center',
+                px: 2.5,
+                backgroundColor: location.pathname === item.path ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
+              }}
+              onClick={() => {
+                handleMenuItemClick(item.path);
+                setMobileOpen(false);
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: (open || mobileOpen) ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} sx={{ opacity: (open || mobileOpen) ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </>
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -91,9 +139,10 @@ const AdminLayout = () => {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
+          width: '100%',
           ...(open && {
-            marginLeft: drawerWidth,
-            width: `calc(100% - ${drawerWidth}px)`,
+            marginLeft: { md: `${drawerWidth}px` },
+            width: { md: `calc(100% - ${drawerWidth}px)` },
             transition: (theme) =>
               theme.transitions.create(['width', 'margin'], {
                 easing: theme.transitions.easing.sharp,
@@ -106,17 +155,29 @@ const AdminLayout = () => {
           <IconButton
             color="inherit"
             aria-label="open drawer"
+            onClick={handleDrawerToggle}
+            edge="start"
+            sx={{
+              marginRight: 2,
+              display: { md: 'none' },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
               marginRight: 5,
-              ...(open && { display: 'none' }),
+              display: { xs: 'none', md: open ? 'none' : 'block' },
             }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          Digital Attendance - Admin
+            Digital Attendance - Admin
           </Typography>
           <IconButton
             size="large"
@@ -164,10 +225,29 @@ const AdminLayout = () => {
           </Menu>
         </Toolbar>
       </AppBar>
+
+      {/* Mobile Drawer (Temporary) */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+
+      {/* Desktop Drawer (Permanent) */}
       <Drawer
         variant="permanent"
         open={open}
         sx={{
+          display: { xs: 'none', md: 'block' },
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
@@ -195,52 +275,15 @@ const AdminLayout = () => {
           },
         }}
       >
-        <Toolbar
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            px: [1],
-          }}
-        >
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </Toolbar>
-        <Divider />
-        <List>
-          {menuItems.map((item) => (
-            <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                  backgroundColor: location.pathname === item.path ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
-                }}
-                onClick={() => handleMenuItemClick(item.path)}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {drawerContent}
       </Drawer>
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
         }}
       >
         <Toolbar />

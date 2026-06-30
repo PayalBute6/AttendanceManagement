@@ -231,10 +231,20 @@ const TeachersList = () => {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, filteredTeachers.length - page * rowsPerPage);
 
   return (
-    <Box sx={{ mt: 8 }}>
+    <Box sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>Teachers Management</Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, mt: 2 }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          gap: 2, 
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'stretch', sm: 'center' },
+          mb: 3, 
+          mt: 2 
+        }}
+      >
         <TextField
           variant="outlined"
           size="small"
@@ -242,7 +252,7 @@ const TeachersList = () => {
           value={searchQuery}
           onChange={handleSearch}
           InputProps={{ startAdornment: <SearchIcon color="action" sx={{ mr: 1 }} /> }}
-          sx={{ width: '40%' }}
+          sx={{ width: { xs: '100%', sm: '40%' } }}
         />
         <Button 
           variant="contained" 
@@ -265,7 +275,7 @@ const TeachersList = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ overflowX: 'auto', maxWidth: '100%' }}>
         <Table>
           <TableHead>
             <TableRow>

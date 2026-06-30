@@ -154,8 +154,17 @@ const ClassesList = () => {
   );
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Box sx={{ p: { xs: 1, sm: 3 } }}>
+      <Box 
+        sx={{ 
+          p: { xs: 1, sm: 3 }, 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          gap: 2,
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'stretch', sm: 'center' } 
+        }}
+      >
         <Typography variant="h4">All Classes</Typography>
         <Button variant="contained" color="primary" onClick={() => handleOpenDialog('add')}>
           <AddIcon sx={{ mr: 1 }} />
@@ -181,7 +190,7 @@ const ClassesList = () => {
         />
       </Paper>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ overflowX: 'auto', maxWidth: '100%' }}>
         <Table>
           <TableHead>
             <TableRow>
