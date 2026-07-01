@@ -284,7 +284,7 @@ const TeacherLayout = () => {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
+          minWidth: 0,
         }}
       >
         <Toolbar />
