@@ -1,0 +1,571 @@
+{
+  "info": {
+    "_postman_id": "attendance-management-system-collection-id",
+    "name": "Attendance Management System",
+    "description": "Ready-to-use API collection for testing the Digital Attendance Management System. Includes automated JWT token management.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.jwt) {",
+                  "    pm.collectionVariables.set(\"token\", jsonData.jwt);",
+                  "    console.log(\"Saved JWT token automatically!\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/auth/login",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"teacher_bob\",\n  \"email\": \"bob@attendance.com\",\n  \"password\": \"bobpassword123\",\n  \"fullName\": \"Bob Builder\",\n  \"role\": \"teacher\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/auth/register",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Admins (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/auth/users",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/auth/logout",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Students",
+      "item": [
+        {
+          "name": "Get All Students (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/students",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "students"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/students/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "students",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Student (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Carter\",\n  \"email\": \"alice@attendance.com\",\n  \"rollNo\": \"S102\",\n  \"classId\": 1,\n  \"contactNumber\": \"1234567890\",\n  \"address\": \"789 Pine Street\",\n  \"username\": \"alice_carter\",\n  \"password\": \"student123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/students",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "students"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Carter Updated\",\n  \"email\": \"alice_new@attendance.com\",\n  \"contactNumber\": \"0987654321\",\n  \"address\": \"789 Pine Street Suite 4\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/students/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "students",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Student (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/students/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "students",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Teachers",
+      "item": [
+        {
+          "name": "Get All Teachers (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/teachers",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "teachers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Teacher by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/teachers/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "teachers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Teacher (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"David Miller\",\n  \"email\": \"david@attendance.com\",\n  \"department\": \"Mathematics\",\n  \"contactNumber\": \"9876543210\",\n  \"address\": \"456 Maple Avenue\",\n  \"username\": \"david_miller\",\n  \"password\": \"teacher123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/teachers",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "teachers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Teacher",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"David Miller Updated\",\n  \"email\": \"david_new@attendance.com\",\n  \"department\": \"Applied Mathematics\",\n  \"contactNumber\": \"9998887776\",\n  \"address\": \"456 Maple Avenue Apt 2B\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/teachers/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "teachers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Teacher (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/teachers/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "teachers",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Classes",
+      "item": [
+        {
+          "name": "Get All Classes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/classes",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "classes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Class (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CS101\",\n  \"section\": \"A\",\n  \"subject\": \"Intro to Programming\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/classes",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "classes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Class (Admin Only)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CS101-Updated\",\n  \"section\": \"A\",\n  \"subject\": \"Intro to Programming v2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/classes/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "classes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Class (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/classes/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "classes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Attendance",
+      "item": [
+        {
+          "name": "Mark Attendance",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classId\": 1,\n  \"date\": \"2026-06-30\",\n  \"entries\": [\n    {\n      \"studentId\": 1,\n      \"status\": \"PRESENT\",\n      \"remarks\": \"Good job\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUri}}/api/attendance/mark",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "mark"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Attendance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/attendance/class/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "class",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Percentage Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUri}}/api/attendance/percentage/1",
+              "host": [
+                "{{baseUri}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "percentage",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUri",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
